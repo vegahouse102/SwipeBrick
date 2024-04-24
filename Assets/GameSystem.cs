@@ -36,6 +36,7 @@ public class GameSystem : MonoBehaviour
             yield return StartCoroutine(SummonBall());
             yield return new WaitUntil(()=>curBallCnt==0);
             blockCnt++;
+            yield return null;
         }
     }
     IEnumerator CalcBrick()
@@ -43,18 +44,15 @@ public class GameSystem : MonoBehaviour
         int randomMask = Random.Range(1,(1<<5)-1);
         float sideX = Brick.GetComponent<BoxCollider2D>().transform.localScale.x;
         float sideY = Brick.GetComponent<BoxCollider2D>().transform.localScale.y;
+        int idx = Random.Range(0,4);
+        Instantiate(Candy,brickLeftTopPos+Vector3.right*idx,Quaternion.identity);
+        randomMask &= ~(1 << idx);
         for(int i = 0; i < 5; i++)
         {
             if ((randomMask & (1 << i)) == 0)
                 continue;
             Instantiate(Brick,brickLeftTopPos+Vector3.right*sideX*i,Quaternion.identity);
-        }
-        int idx = 0;
-        do
-        {
-            idx = Random.Range(0, 4);
-        } while ((randomMask & (1 << idx)) != 0);
-        Instantiate(Candy,brickLeftTopPos+Vector3.right*idx,Quaternion.identity);
+        } 
         foreach(GameObject brick in GameObject.FindGameObjectsWithTag("Brick"))
         {
             brick.transform.Translate(Vector3.down*sideY);
